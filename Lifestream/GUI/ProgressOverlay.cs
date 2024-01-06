@@ -18,7 +18,7 @@ namespace Lifestream.GUI
         {
             this.SizeConstraints = new()
             {
-                MinimumSize = new(ImGuiHelpers.MainViewport.Size.X, 0),
+                MinimumSize = new(ImGuiHelpers.MainViewport.Size.X / ImGuiHelpers.GlobalScale, 0),
                 MaximumSize = new(0, float.MaxValue)
             };
         }
