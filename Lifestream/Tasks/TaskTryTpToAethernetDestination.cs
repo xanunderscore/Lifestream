@@ -51,7 +51,7 @@ namespace Lifestream.Tasks
                     }
                 }
 
-                foreach (var x in P.DataStore.Aetherytes[master])
+                foreach (var x in P.DataStore.AetheryteGroups[master.Group])
                 {
                     if (P.ActiveAetheryte != x)
                     {

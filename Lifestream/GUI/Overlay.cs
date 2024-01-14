@@ -90,7 +90,7 @@ namespace Lifestream.GUI
                 Popup(master);
             }
 
-            foreach (var x in P.DataStore.Aetherytes[master])
+            foreach (var x in P.DataStore.AetheryteGroups[master.Group])
             {
                 if (!P.Config.Hidden.Contains(x.ID))
                 {

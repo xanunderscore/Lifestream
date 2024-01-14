@@ -277,35 +277,13 @@ namespace Lifestream
             if (a != null)
             {
                 var pos2 = a.Position.ToVector2();
-                foreach (var x in DataStore.Aetherytes)
-                {
-                    if (x.Key.TerritoryType == Svc.ClientState.TerritoryType && Vector2.Distance(x.Key.Position, pos2) < 10)
-                    {
-                        if (ActiveAetheryte == null)
-                        {
-                            Overlay.IsOpen = true;
-                        }
-                        ActiveAetheryte = x.Key;
-                        return;
-                    }
-                    foreach (var l in x.Value)
-                    {
-                        if (l.TerritoryType == Svc.ClientState.TerritoryType && Vector2.Distance(l.Position, pos2) < 10)
-                        {
-                            if (ActiveAetheryte == null)
-                            {
-                                Overlay.IsOpen = true;
-                            }
-                            ActiveAetheryte = l;
-                            return;
-                        }
-                    }
-                }
+                ActiveAetheryte = DataStore.Aetherytes.FirstOrDefault(y => y.TerritoryType == Svc.ClientState.TerritoryType && Vector2.Distance(y.Position, pos2) < 10);
             }
             else
             {
                 ActiveAetheryte = null;
             }
+            Overlay.IsOpen = ActiveAetheryte != null;
         }
     }
 }

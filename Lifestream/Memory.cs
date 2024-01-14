@@ -116,7 +116,7 @@ namespace Lifestream
                             {
                                 var node = addon->UldManager.NodeList[2]->GetAsAtkTextNode();
                                 var text = MemoryHelper.ReadSeString(&node->NodeText).ExtractText();
-                                foreach(var x in P.DataStore.Aetherytes[master])
+                                foreach(var x in P.DataStore.AetheryteGroups[master.Group])
                                 {
                                     if(x.Name == text)
                                     {

@@ -114,11 +114,12 @@ namespace Lifestream.GUI
                 ImGui.SetClipboardText(JsonConvert.SerializeObject(P.DataStore.StaticData));
                 P.DataStore.StaticData.SaveConfiguration(Path.Combine(Svc.PluginInterface.AssemblyLocation.DirectoryName, DataStore.FileName));
             }
-            foreach (var x in P.DataStore.Aetherytes)
+            foreach (var x in P.DataStore.AetheryteGroups)
             {
                 ImGui.Separator();
+                /*
                 if (ImGui.Button($"{x.Key.Name}", bsize))
-                {
+                
                     DebugAetheryte = x.Key;
                 }
                 {
@@ -158,6 +159,7 @@ namespace Lifestream.GUI
                         }
                     }
                 }
+                */
                 foreach (var l in x.Value)
                 {
                     if (ImGui.Button($"    {l.Name}", bsize)) DebugAetheryte = l;

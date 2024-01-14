@@ -15,18 +15,19 @@ namespace Lifestream
     internal class DataStore
     {
         internal const string FileName = "StaticData.json";
-        internal uint[] Territories;
-        internal Dictionary<TinyAetheryte, List<TinyAetheryte>> Aetherytes = new();
+        internal HashSet<uint> Territories;
+        internal Dictionary<uint, List<TinyAetheryte>> AetheryteGroups = new();
         internal string[] Worlds = Array.Empty<string>();
         internal string[] DCWorlds = Array.Empty<string>();
         internal StaticData StaticData;
 
+        internal IEnumerable<TinyAetheryte> Aetherytes => AetheryteGroups.SelectMany(x => x.Value);
+
         internal TinyAetheryte GetMaster(TinyAetheryte aetheryte)
         {
-            foreach(var x in Aetherytes.Keys)
-            {
-                if (x.Group == aetheryte.Group) return x;
-            }
+            if (AetheryteGroups.TryGetValue(aetheryte.Group, out var e))
+                return e.FirstOrDefault(x => x.IsAetheryte);
+
             return default;
         }
 
@@ -34,42 +35,19 @@ namespace Lifestream
         {
             var terr = new List<uint>();
             StaticData = EzConfig.LoadConfiguration<StaticData>(Path.Combine(Svc.PluginInterface.AssemblyLocation.DirectoryName, FileName), false);
-            Svc.Data.GetExcelSheet<Aetheryte>().Each(x =>
-            {
-                if (x.AethernetGroup != 0)
-                {
-                    if (x.IsAetheryte)
-                    {
-                        Aetherytes[GetTinyAetheryte(x)] = new();
-                        terr.Add(x.Territory.Value.RowId);
-                        if(!StaticData.Callback.ContainsKey(x.RowId))
-                        {
-                            StaticData.Callback[x.RowId] = 0;
-                        }
-                    }
-                }
-            });
-            Svc.Data.GetExcelSheet<Aetheryte>().Each(x =>
-            {
-                if (x.AethernetGroup != 0)
-                {
-                    if (!x.IsAetheryte)
-                    {
-                        var a = GetTinyAetheryte(x);
-                        Aetherytes[GetMaster(a)].Add(a);
-                        terr.Add(x.Territory.Value.RowId);
-                        if (!StaticData.Callback.ContainsKey(x.RowId))
-                        {
-                            StaticData.Callback[x.RowId] = 0;
-                        }
-                    }
-                }
-            });
-            foreach(var x in Aetherytes.Keys.ToArray())
-            {
-                Aetherytes[x] = Aetherytes[x].OrderBy(x => GetAetheryteSortOrder(x.ID)).ToList();
+            foreach(var x in Svc.Data.GetExcelSheet<Aetheryte>().Where(x => x.AethernetGroup != 0)) {
+                if (!AetheryteGroups.ContainsKey(x.AethernetGroup))
+                    AetheryteGroups[x.AethernetGroup] = [];
+
+                AetheryteGroups[x.AethernetGroup].Add(GetTinyAetheryte(x));
+                StaticData.Callback[x.RowId] = 0;
             }
-            Territories = terr.ToArray();
+
+            foreach(var x in AetheryteGroups.Keys.ToArray())
+            {
+                AetheryteGroups[x].Sort((x,y) => GetAetheryteSortOrder(x.ID).CompareTo(GetAetheryteSortOrder(y.ID)));
+            }
+            Territories = AetheryteGroups.Values.SelectMany(x => x.Select(y => y.TerritoryType)).ToHashSet();
             if (ProperOnLogin.PlayerPresent)
             {
                 BuildWorlds();

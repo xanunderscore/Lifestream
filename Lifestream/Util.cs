@@ -215,18 +215,10 @@ namespace Lifestream
                 var pos2 = a.Position.ToVector2();
                 foreach (var x in P.DataStore.Aetherytes)
                 {
-                    if (x.Key.TerritoryType == TerritoryType && Vector2.Distance(x.Key.Position, pos2) < 10)
+                    if (x.TerritoryType == TerritoryType && Vector2.Distance(x.Position, pos2) < 10)
                     {
-                        t = x.Key;
+                        t = x;
                         return true;
-                    }
-                    foreach (var l in x.Value)
-                    {
-                        if (l.TerritoryType == TerritoryType && Vector2.Distance(l.Position, pos2) < 10)
-                        {
-                            t = l;
-                            return true;
-                        }
                     }
                 }
             }
@@ -323,17 +315,12 @@ namespace Lifestream
 
         internal static GameObject GetValidAetheryte()
         {
-            foreach(var x in Svc.Objects)
-            {
-                if(x.ObjectKind == ObjectKind.Aetheryte)
-                {
-                    if(Vector2.Distance(Svc.ClientState.LocalPlayer.Position.ToVector2(), x.Position.ToVector2()) < 11f && Vector3.Distance(Svc.ClientState.LocalPlayer.Position, x.Position) < 15f && x.IsVPosValid() && x.IsTargetable())
-                    {
-                        return x;
-                    }
-                }
-            }
-            return null;
+            return Svc.Objects.Where(x => x.ObjectKind == ObjectKind.Aetheryte).FirstOrDefault(x => 
+                Vector2.Distance(Svc.ClientState.LocalPlayer.Position.ToVector2(), x.Position.ToVector2()) < 11f
+                    && Vector3.Distance(Svc.ClientState.LocalPlayer.Position, x.Position) < 15f
+                    && x.IsVPosValid()
+                    && x.IsTargetable
+                );
         }
 
         internal static bool IsVPosValid(this GameObject x)
