@@ -92,6 +92,7 @@ namespace Lifestream.GUI
 
             foreach (var x in P.DataStore.AetheryteGroups[master.Group])
             {
+                if (x.IsAetheryte) continue;
                 if (!P.Config.Hidden.Contains(x.ID))
                 {
                     var name = (P.Config.Favorites.Contains(x.ID) ? "★ " : "") + (P.Config.Renames.TryGetValue(x.ID, out var value) ? value : x.Name);
