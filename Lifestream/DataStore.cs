@@ -1,6 +1,7 @@
 ﻿using ECommons.Configuration;
 using ECommons.Events;
 using ECommons.GameHelpers;
+using ECommons.Reflection;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,8 @@ namespace Lifestream
                     AetheryteGroups[x.AethernetGroup] = [];
 
                 AetheryteGroups[x.AethernetGroup].Add(GetTinyAetheryte(x));
-                StaticData.Callback[x.RowId] = 0;
+                if (!StaticData.Callback.ContainsKey(x.RowId))
+                    StaticData.Callback[x.RowId] = 0;
             }
 
             foreach(var x in AetheryteGroups.Keys.ToArray())
